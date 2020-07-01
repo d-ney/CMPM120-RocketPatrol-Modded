@@ -79,6 +79,9 @@ class Play extends Phaser.Scene {
         this.gameOver = false;
 
         this.scoreConfig.fixedWidth = 0;
+
+        //nyoooome tracking
+         this.chkUp1 = false, this.chkUp2 = false, this.chkUp3 = false;
     }
 
     update()
@@ -140,6 +143,18 @@ class Play extends Phaser.Scene {
             this.ship03.reset();
             console.log("booom 03");
         }
+
+        //nyoooome sound check
+        
+        if(this.chkUp1 == true && this.chkUp2 == true && this.chkUp3 == true)
+            this.chkUp1 = this.chkUp2 = this.chkUp3 = false;
+
+        if(this.chkUp1 == false)
+            this.chkUp1 = this.checkUp(this.p1Rocket, this.ship01, this.chkUp1);
+        if(this.chkUp2 == false)
+            this.chkUp2 = this.checkUp(this.p1Rocket, this.ship02, this.chkUp2);
+        if(this.chkUp3 == false)
+            this.chkUp3 = this.checkUp(this.p1Rocket, this.ship03, this.chkUp3);
     }
 
     shipExplode(ship)
@@ -162,7 +177,7 @@ class Play extends Phaser.Scene {
 
     }
 
-    checkCollision(rocket, ship)
+    checkCollision(rocket, ship, chk)
     {
         if( rocket.x < ship.x + ship.width &&
             rocket.x + rocket.width > ship.x &&
@@ -175,7 +190,21 @@ class Play extends Phaser.Scene {
         else
             return false;
             
-    }   
+    } 
+    
+    checkUp(rocket, ship)
+    {
+        if( rocket.x < ship.x + ship.width - 10 &&
+            rocket.x + rocket.width + 10 > ship.x)
+            {
+                this.sound.play('sfx_zoom');
+                console.log("passed over");
+                return true;
+            }
+
+        return false;
+            
+    }
 
     
 
