@@ -49,6 +49,23 @@ class Play extends Phaser.Scene {
             frameRate: 30
         })
 
+        this.p1Timer = game.settings.gameTimer;
+        console.log(this.p1Timer);
+        //timer display
+        let timerConfig = {
+            fontFamily: 'Courier',
+            fontSize: '28px',
+            backgroundColor: '#F3B141',
+            color: '#843605',
+            align: 'right',
+            padding: {
+                top: 5,
+                bottom: 5,
+            },
+            fixedWidth: 100
+        }
+        this.timeLeft = this.add.text(469, 54, this.p1Timer, timerConfig);
+
         // track score
         this.p1Score = 0;
 
@@ -65,6 +82,7 @@ class Play extends Phaser.Scene {
             },
             fixedWidth: 100
         }
+        
         this.scoreLeft = this.add.text(69, 54, this.p1Score, scoreConfig);
 
         this.gameOver = false;
@@ -76,10 +94,21 @@ class Play extends Phaser.Scene {
             this.add.text(game.config.width/2, game.config.height/2 + 64, '(F)ire to Restart or <- for Menu', scoreConfig).setOrigin(0.5);
             this.gameOver = true;
         }, null, this);
+
     }
 
     update()
     { 
+
+        //display timer
+        this.p1Timer -= 16.666667;
+        this.p1TDisplay = this.p1Timer / 1000;
+        
+         if(this.gameOver && this.p1TDisplay != 0)
+             this.p1TDisplay = 0;
+        if(this.p1TDisplay >= 0)
+            this.timeLeft.text = this.p1TDisplay.toFixed(2);
+        
         // check key input for restart
         if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyF)) {
             this.scene.restart(this.p1Score);
