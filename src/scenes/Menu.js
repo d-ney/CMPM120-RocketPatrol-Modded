@@ -52,6 +52,7 @@ class Menu extends Phaser.Scene {
         {
             //baby mode
             game.settings = {
+                diff: 'easy',
                 spaceshipSpeed: 3,
                 gameTimer: 60000
             }
@@ -62,6 +63,7 @@ class Menu extends Phaser.Scene {
         {
             //real mode
             game.settings = {
+                diff: 'hard',
                 spaceshipSpeed: 4,
                 gameTimer: 45000
             }

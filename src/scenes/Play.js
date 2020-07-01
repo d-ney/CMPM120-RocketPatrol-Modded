@@ -3,6 +3,8 @@ class Play extends Phaser.Scene {
     constructor()
     {
         super("playScene");
+
+        
     }
 
     preload()
@@ -15,6 +17,7 @@ class Play extends Phaser.Scene {
         //load explosion spritesheet
         this.load.spritesheet('explosion', './assets/explosion.png', {frameWidth: 64, frameHeight: 32, startFrame: 0, endFrame: 9});
     }
+
     create()
     {
         //place background tile
@@ -49,10 +52,9 @@ class Play extends Phaser.Scene {
             frameRate: 30
         })
 
-        this.p1Timer = game.settings.gameTimer;
-        console.log(this.p1Timer);
-        //timer display
-        let timerConfig = {
+
+        //score display
+        this.scoreConfig = {
             fontFamily: 'Courier',
             fontSize: '28px',
             backgroundColor: '#F3B141',
@@ -64,37 +66,19 @@ class Play extends Phaser.Scene {
             },
             fixedWidth: 100
         }
-        this.timeLeft = this.add.text(469, 54, this.p1Timer, timerConfig);
+        this.p1Timer = game.settings.gameTimer;
+        console.log(this.p1Timer);
+    
+        this.timeLeft = this.add.text(469, 54, this.p1Timer, this.scoreConfig);
 
         // track score
         this.p1Score = 0;
-
-        //score display
-        let scoreConfig = {
-            fontFamily: 'Courier',
-            fontSize: '28px',
-            backgroundColor: '#F3B141',
-            color: '#843605',
-            align: 'right',
-            padding: {
-                top: 5,
-                bottom: 5,
-            },
-            fixedWidth: 100
-        }
         
-        this.scoreLeft = this.add.text(69, 54, this.p1Score, scoreConfig);
+        this.scoreLeft = this.add.text(69, 54, this.p1Score, this.scoreConfig);
 
         this.gameOver = false;
 
-        //minute clock
-        scoreConfig.fixedWidth = 0;
-        this.clock = this.time.delayedCall(game.settings.gameTimer, () => {
-            this.add.text(game.config.width/2, game.config.height/2, 'GAME OVER', scoreConfig).setOrigin(0.5);
-            this.add.text(game.config.width/2, game.config.height/2 + 64, '(F)ire to Restart or <- for Menu', scoreConfig).setOrigin(0.5);
-            this.gameOver = true;
-        }, null, this);
-
+        this.scoreConfig.fixedWidth = 0;
     }
 
     update()
@@ -103,11 +87,15 @@ class Play extends Phaser.Scene {
         //display timer
         this.p1Timer -= 16.666667;
         this.p1TDisplay = this.p1Timer / 1000;
-        
-         if(this.gameOver && this.p1TDisplay != 0)
-             this.p1TDisplay = 0;
-        if(this.p1TDisplay >= 0)
-            this.timeLeft.text = this.p1TDisplay.toFixed(2);
+            
+        if(this.p1Timer <= 0) {
+            this.p1TDisplay = 0;
+            this.add.text(game.config.width/2, game.config.height/2, 'GAME OVER', this.scoreConfig).setOrigin(0.5);
+            this.add.text(game.config.width/2, game.config.height/2 + 64, '(F)ire to Restart or <- for Menu', this.scoreConfig).setOrigin(0.5);
+            this.gameOver = true;
+        }
+
+        this.timeLeft.text = this.p1TDisplay.toFixed(2);
         
         // check key input for restart
         if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyF)) {
@@ -133,7 +121,7 @@ class Play extends Phaser.Scene {
         }
         //check collisions
         if(this.checkCollision(this.p1Rocket, this.ship01))
-        {
+        {  
             this.p1Rocket.reset();
             this.ship01.reset();
             console.log("booom 01");
@@ -165,7 +153,9 @@ class Play extends Phaser.Scene {
             ship.alpha = 1;
             boom.destroy();
         });
-        //score increment and repaint
+        //score/timer increment and repaint
+        this.p1Timer += ship.points * 100;
+
         this.p1Score += ship.points;
         this.scoreLeft.text = this.p1Score;
         this.sound.play('sfx_explosion');

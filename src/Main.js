@@ -17,6 +17,7 @@ let keyRight;
 
 //define game settings
 game.settings = {
+    diff: 'easy',
     spaceshipSpeed: 3,
     gameTimer: 60000
 }
