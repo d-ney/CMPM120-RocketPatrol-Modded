@@ -110,6 +110,9 @@ class Play extends Phaser.Scene {
 
         //nyoooome tracking
          this.chkUp1 = false, this.chkUp2 = false, this.chkUp3 = false;
+
+         //speed up tracking
+         this.spedUp = false;
     }
 
     update()
@@ -118,9 +121,17 @@ class Play extends Phaser.Scene {
         //display timer
         this.p1Timer -= 16.666667;
         this.p1TDisplay = this.p1Timer / 1000;
-            
+        
+        
+        if(this.p1Timer <= game.settings.gameTimer / 2 && !this.spedUp)
+        {
+            console.log("speed time");
+            game.settings.spaceshipSpeed += 2;
+            this.spedUp = true;
+        }
         if(this.p1Timer <= 0) {
             this.p1TDisplay = 0;
+            game.settings.spaceshipSpeed -= 2;
             this.add.text(game.config.width/2, game.config.height/2, 'GAME OVER', this.scoreConfig).setOrigin(0.5);
             this.add.text(game.config.width/2, game.config.height/2 + 64, '(F)ire to Restart or <- for Menu', this.scoreConfig).setOrigin(0.5);
             this.gameOver = true;
