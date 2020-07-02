@@ -12,10 +12,16 @@ class Play extends Phaser.Scene {
         //load images/tiles
         this.load.image('rocket', './assets/rocket.png');
         this.load.image('spaceship', './assets/spaceship.png');
-        this.load.image('starfield', './assets/starfield.png');
+        this.load.image('starfield', './assets/racetrack.png');
 
         //load explosion spritesheet
         this.load.spritesheet('explosion', './assets/explosion.png', {frameWidth: 64, frameHeight: 32, startFrame: 0, endFrame: 9});
+        
+        //load car spritesheet
+        this.load.spritesheet('car_1_sheet', './assets/car_1.png', {frameWidth: 83, frameHeight: 36, startFrame: 0, endFrame: 4});
+        this.load.spritesheet('car_2_sheet', './assets/car_2.png', {frameWidth: 83, frameHeight: 36, startFrame: 0, endFrame: 4});
+        this.load.spritesheet('car_3_sheet', './assets/car_3.png', {frameWidth: 83, frameHeight: 36, startFrame: 0, endFrame: 4});
+    
     }
 
     create()
@@ -34,10 +40,7 @@ class Play extends Phaser.Scene {
         //add rocket
         this.p1Rocket = new Rocket(this, game.config.width/2, 431, 'rocket', 0).setOrigin(0, 0);
         
-        //add spaceships x3
-        this.ship01 = new Spaceship(this, game.config.width + 192, 132, 'spaceship',  0, 30).setOrigin(0,0);
-        this.ship02 = new Spaceship(this, game.config.width + 96, 196, 'spaceship', 0, 20).setOrigin(0,0);
-        this.ship03 = new Spaceship(this, game.config.width, 260, 'spaceship', 0, 10).setOrigin(0,0);
+        
         
 
         //defining keys
@@ -52,6 +55,31 @@ class Play extends Phaser.Scene {
             frameRate: 30
         })
 
+        //config car_1 anim
+        this.anims.create({
+            key: 'car_1_anim',
+            frames: this.anims.generateFrameNumbers('car_1_sheet', { start: 0, end: 4, first: 0}),
+            frameRate: 5
+        })
+
+        //config car_2 anim
+        this.anims.create({
+            key: 'car_2_anim',
+            frames: this.anims.generateFrameNumbers('car_2_sheet', { start: 0, end: 4, first: 0}),
+            frameRate: 5
+        })
+
+         //config car_3 anim
+         this.anims.create({
+            key: 'car_3_anim',
+            frames: this.anims.generateFrameNumbers('car_3_sheet', { start: 0, end: 4, first: 0}),
+            frameRate: 5
+        })
+
+        //add spaceships x3
+        this.ship01 = new Spaceship(this, game.config.width + 192, 120, 'car_3',  0, 30).setOrigin(0,0);
+        this.ship02 = new Spaceship(this, game.config.width + 96, 190, 'car_2', 0, 20).setOrigin(0,0);
+        this.ship03 = new Spaceship(this, game.config.width, 275, 'car_1', 0, 10).setOrigin(0,0);
 
         //score display
         this.scoreConfig = {
@@ -119,8 +147,11 @@ class Play extends Phaser.Scene {
 
             //update spaceship
             this.ship01.update();
+            this.ship01.play('car_3_anim', true);
             this.ship02.update();
+            this.ship02.play('car_2_anim', true);
             this.ship03.update();
+            this.ship03.play('car_1_anim', true);
         }
         //check collisions
         if(this.checkCollision(this.p1Rocket, this.ship01))
