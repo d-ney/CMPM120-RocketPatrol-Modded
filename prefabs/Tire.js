@@ -36,6 +36,7 @@ class Tire extends Phaser.GameObjects.Sprite {
         {
             this.isFiring = true;
             this.sfxTire.play(); //play sfx
+            this.anims.play('tire', true);
         }
         // if fired, move up
         if(this.isFiring && this.y >= 108) 
@@ -70,7 +71,6 @@ class Tire extends Phaser.GameObjects.Sprite {
         this.isFiring = false;
         this.y = 400;
         this.x =game.config.width/2;
-        this.anims.stop();
     }
 
 
