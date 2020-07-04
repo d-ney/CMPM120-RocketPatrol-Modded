@@ -14,6 +14,7 @@ let game = new Phaser.Game(config);
 let keyF;
 let keyLeft;
 let keyRight;
+let keyX;
 
 //define game settings
 game.settings = {

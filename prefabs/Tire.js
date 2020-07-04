@@ -1,16 +1,24 @@
-class Rocket extends Phaser.GameObjects.Sprite {
+class Tire extends Phaser.GameObjects.Sprite {
     constructor(scene, x, y, texture, frame)
     {
         super(scene, x, y, texture, frame);
         scene.add.existing(this);
 
         this.isFiring = false;
+        this.bounceMax = 80;
+        this.currBounce = 5;
+        this.bounceDir = -1;
         
-        this.sfxRocket = scene.sound.add('sfx_rocket'); //rocket sfx
+        this.sfxTire = scene.sound.add('sfx_rocket'); //rocket sfx
+        
     }
+
 
     update()
     {
+        function onEvent() {
+            
+        }
         //left/right movement
         if(!this.isFiring)
         {
@@ -27,20 +35,31 @@ class Rocket extends Phaser.GameObjects.Sprite {
         if(Phaser.Input.Keyboard.JustDown(keyF) && !this.isFiring)
         {
             this.isFiring = true;
-            this.sfxRocket.play(); //play sfx
-            this.anims.play('wrench', true);
+            this.sfxTire.play(); //play sfx
         }
         // if fired, move up
         if(this.isFiring && this.y >= 108) 
         {
-            this.y -= 2;
-        }
+            this.y -= 3;
 
+            if(this.currBounce <= this.bounceMax)
+            {
+                this.x += (2 * this.bounceDir);
+                this.currBounce += 2;
+                
+            }
+            else
+            {
+                this.currBounce = 2;
+                this.bounceDir *= -1;
+            }
+        }
         //reset on miss
         if(this.y <= 108)
         {
             this.isFiring = false;
             this.y = 400;
+            this.x =game.config.width/2;
             this.anims.stop();
 
         }
@@ -50,6 +69,7 @@ class Rocket extends Phaser.GameObjects.Sprite {
     {
         this.isFiring = false;
         this.y = 400;
+        this.x =game.config.width/2;
         this.anims.stop();
     }
 

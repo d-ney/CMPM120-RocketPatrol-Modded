@@ -10,9 +10,11 @@ class Play extends Phaser.Scene {
     preload()
     {
         //load images/tiles
-        this.load.image('rocket', './assets/rocket.png');
+        //this.load.image('rocket', './assets/rocket.png');
         this.load.image('spaceship', './assets/spaceship.png');
         this.load.image('starfield', './assets/racetrack.png');
+        this.load.image('wrench_sprite', './assets/wrench_sprite.png');
+        this.load.image('tire_sprite', './assets/tire_sprite.png');
 
         //load explosion spritesheet
         this.load.spritesheet('explosion', './assets/explosion.png', {frameWidth: 64, frameHeight: 32, startFrame: 0, endFrame: 9});
@@ -21,6 +23,10 @@ class Play extends Phaser.Scene {
         this.load.spritesheet('car_1_sheet', './assets/car_1.png', {frameWidth: 83, frameHeight: 36, startFrame: 0, endFrame: 4});
         this.load.spritesheet('car_2_sheet', './assets/car_2.png', {frameWidth: 83, frameHeight: 36, startFrame: 0, endFrame: 4});
         this.load.spritesheet('car_3_sheet', './assets/car_3.png', {frameWidth: 83, frameHeight: 36, startFrame: 0, endFrame: 4});
+
+        //load wrench spritesheet
+        this.load.spritesheet('wrench_sheet', './assets/monkey_wrench.png', {frameWidth: 32, frameHeight: 32, startFrame: 0, endFrame: 9});
+        this.load.spritesheet('tire_sheet', './assets/Tire.png', {frameWidth: 32, frameHeight: 32, startFrame: 0, endFrame: 1});
     
     }
 
@@ -37,17 +43,11 @@ class Play extends Phaser.Scene {
         //green ui background
         this.add.rectangle(37, 42, 566, 64, 0x00FF00).setOrigin(0, 0);
 
-        //add rocket
-        this.p1Rocket = new Rocket(this, game.config.width/2, 431, 'rocket', 0).setOrigin(0, 0);
-        this.p1Rocket.setScale(0.5);
-        
-        
-        
-
         //defining keys
         keyF = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F);
         keyLeft = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
         keyRight = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
+        keyX = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X);
 
         //config explosion anim
         this.anims.create({
@@ -76,6 +76,23 @@ class Play extends Phaser.Scene {
             frames: this.anims.generateFrameNumbers('car_3_sheet', { start: 0, end: 4, first: 0}),
             frameRate: 5
         })
+
+        //config weapon anims
+        this.anims.create({
+            key: 'wrench',
+            frames: this.anims.generateFrameNumbers('wrench_sheet', {start: 0, end: 9, first: 0}) ,
+            frameRate: 2
+        })
+
+        this.anims.create({
+            key: 'tire',
+            frames: this.anims.generateFrameNumbers('tire_sheet', {start: 0, end: 1, first: 0}) ,
+            frameRate: 1
+        })
+
+         //add rocket
+         this.p1Rocket = new Rocket(this, game.config.width/2, 400, 'wrench_sprite', 0).setOrigin(0, 0);
+
 
         //add spaceships x3
         this.ship01 = new Spaceship(this, game.config.width + 192, 120, 'car_3',  0, 30).setOrigin(0,0);
@@ -114,6 +131,8 @@ class Play extends Phaser.Scene {
 
          //speed up tracking
          this.spedUp = false;
+        
+          this.weapon = 'rocket';
     }
 
     update()
@@ -149,9 +168,37 @@ class Play extends Phaser.Scene {
             this.scene.start("menuScene");
         }
 
+        console.log("weapon equals " + this.weapon + " out of loop");
+
+        if (Phaser.Input.Keyboard.JustDown(keyX))
+        {
+            if(this.weapon == 'tire')
+            {
+                this.p1Rocket.destroy();
+                this.p1Rocket = new Rocket(this, game.config.width/2, 400, 'wrench_sprite', 0).setOrigin(0, 0);
+                this.weapon = 'rocket';
+                this.p1Rocket.anims.play('wrench', true);
+                console.log("weapon switched, now equals " + this.weapon);
+                return;
+            }
+            
+            if(this.weapon == 'rocket')
+            {
+                {
+                    this.p1Rocket.destroy();
+                    this.p1Rocket = new Tire(this, game.config.width/2, 400, 'tire_sprite', 0).setOrigin(0, 0);
+                    this.weapon = 'tire';
+                    this.p1Rocket.anims.play('tire', true);
+                    console.log("weapon switched, now equals " + this.weapon);
+                    return;
+                }
+            }
+        }       
+        
+        
+
         //scroll background
         this.starfield.tilePositionX -= 4;
-
         if(!this.gameOver)
         {
             //update rocket
@@ -167,22 +214,25 @@ class Play extends Phaser.Scene {
         }
         //check collisions
         if(this.checkCollision(this.p1Rocket, this.ship01))
-        {  
-            this.p1Rocket.reset();
+        { 
+            if(this.weapon == 'rocket') 
+                this.p1Rocket.reset();
             this.ship01.reset();
             console.log("booom 01");
         }
 
         if(this.checkCollision(this.p1Rocket, this.ship02))
         {
-            this.p1Rocket.reset();
+            if(this.weapon == 'rocket') 
+                this.p1Rocket.reset();
             this.ship02.reset();
             console.log("booom 02");
         }
 
         if(this.checkCollision(this.p1Rocket, this.ship03))
         {
-            this.p1Rocket.reset();
+            if(this.weapon == 'rocket') 
+                this.p1Rocket.reset();
             this.ship03.reset();
             console.log("booom 03");
         }
