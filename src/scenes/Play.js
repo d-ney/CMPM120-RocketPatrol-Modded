@@ -170,7 +170,7 @@ class Play extends Phaser.Scene {
 
         console.log("weapon equals " + this.weapon + " out of loop");
 
-        if (Phaser.Input.Keyboard.JustDown(keyX))
+        if (Phaser.Input.Keyboard.JustDown(keyX) && !this.p1Rocket.isFiring)
         {
             if(this.weapon == 'tire')
             {

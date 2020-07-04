@@ -5,8 +5,9 @@ class Tire extends Phaser.GameObjects.Sprite {
         scene.add.existing(this);
 
         this.isFiring = false;
-        this.bounceMax = 80;
+        this.bounceMax = 100;
         this.currBounce = 5;
+
         this.bounceDir = -1;
         
         this.sfxTire = scene.sound.add('sfx_rocket'); //rocket sfx
@@ -41,7 +42,7 @@ class Tire extends Phaser.GameObjects.Sprite {
         // if fired, move up
         if(this.isFiring && this.y >= 108) 
         {
-            this.y -= 3;
+            this.y -= 2;
 
             if(this.currBounce <= this.bounceMax)
             {
